@@ -1,0 +1,10 @@
+export { default as arrow } from './arrow';
+export { default as cancel } from './cancel';
+export { default as heart } from './heart';
+export { default as logo } from './logo';
+export { default as logoDigit } from './logoDigit';
+export { default as nimax } from './nimax';
+export { default as bowArrow } from './bowArrow';
+export { default as burgerLine } from './burgerLine';
+export { default as strokeHeart } from './strokeHeart';
+export { default as dish } from './dish';

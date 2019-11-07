@@ -1,44 +1,76 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# CREATE-PARSEL-APP
 
-## Available Scripts
+## Запуск
 
-In the project directory, you can run:
+```bash
+yarn
+yarn start
+```
 
-### `yarn start`
+## Структура проекта
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Components
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Содержит в себе компоненты, сортированные по абстрактным ролям ( form, content, cards, ..., etc ) 
 
-### `yarn test`
+Особенности Компонента:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Чистый, небольшой, независимый от контекста
+- Не использует и не изменяет глобальный стейт
+- Не ипользует REST / GRAPHQL
+- Не использует Контейнеры
+- Может использовать другие Компоненты
+- Не содержит сложную программную логику
+- Можно рассматривать его как чистый шаблон верстки
+- Старается не содержать отступы и фиксированные размеры, делегируя эту задачу на оборачивающий блок, который будет использовать этот Компонент
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Containers
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Содержит в себе контейнеры, сортированные по сущностям ( pages, fundamental, news, user, ...., etc)
+pages - это полностью собранные страницы
+fundamental - это фундаментальные компоненты построения страницы ( header, footer, aside, navigation, ..., etc )
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Особенности Контейнера:
 
-### `yarn eject`
+- Содержит в себе основную программную логику и может использовать REST / GRAPHQL, а также использовать и менять глобальный стейт
+- Может использовать другие Контейнеры и Компоненты
+- Содержит в себе ограниченное количество стилей, в противном случае лучше вынести их в отдельный Компонент
+- Является логически изолированной секцией с выводом данных, используя компоненты, но также может связывать эти секции в большие блоки и страницы
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Constants
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Содержит в себе статичные данные, которые необходимо использовать глобально по всему проекту. Также содержит в себе значения различных условных флагов - свитчей, которые приходят с бэка. Допустим, если с бека приходит status, который может иметь несколько разный значений, лучше вынести эти значения в константы. Конвенция именования - UPPER_SNAKE_CASE.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Зачем константы, если можно просто текстом проверить статус ` status === 'fail' `?
+- Константы лучше для чтения и понимания, а также если данные с бека поменяются, то нам надо будет поменять это только в одном месте.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Пример статусов:
 
-## Learn More
+`
+  const STATUSES = {
+    SUCCESS: 'success',
+    FAIL: 'fail',
+    PROCESS: 'process',
+  }
+`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Graphql
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Содержит в себе graphql фрагменты, мутации, ресолверы и запросы данных. В каждой папке разбиваем файлы по сущностям ( news, user, ..., etc ). 
+
+Фрагменты.
+
+Разбиваем фрагменты по типам graphql. Названия переменных делаем по шаблону [name + Fragment] в camelCase. Пример, есть модель UserRole, называем фрагмент UserRoleFragment.
+
+Мутации и Запросы
+
+Называем по rest конвенциям в UPPER_SNAKE_CASE.
+
+### Store
+
+Redux хранилище, в разбивкой по сущностям, которые содержат свои types, actions и reducers. Называем по rest конвенциям. Редюсеры не должны содержать в себе какую-либо сложную логику, держать их простым и понятными. 
+
+### Utils
+
+Всю логику и преобразования данных храним тут по сущностям. Также функции помощники, форматтеры, парсеры, селекторы и тд. Придумываем уникальные названия, чтобы использовать напрямую из utils.

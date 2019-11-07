@@ -1,0 +1,53 @@
+variables:
+  REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_REF_SLUG}
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - yarn install
+    - yarn build
+    - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
+    - docker build -t ${REGISTRY} .
+    - docker push ${REGISTRY}
+
+deploy:development:
+  extends: .deploy
+  variables:
+    SERVER_KEY: ${DEVELOPMENT_KEY}
+    SERVER_IP: ${DEVELOPMENT_IP}
+    SERVER_USER: ${DEVELOPMENT_USER}
+    PATH_PROJECT: /home/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}
+    MODE: 'development'
+
+.deploy:
+  stage: deploy
+  script:
+    - mkdir -p ~/.ssh
+    - echo "${SERVER_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H ${SERVER_IP} >> ~/.ssh/known_hosts
+
+    # создание домашней папки проекта
+    - ssh ${SERVER_USER}@${SERVER_IP} "if [ ! -d ${PATH_PROJECT} ]; then mkdir -p ${PATH_PROJECT}; fi"
+
+    # создание .env проекта
+    - touch .env
+    - if [ ${CI_COMMIT_REF_SLUG} == "master" ]; then echo HOST= >> .env; else echo HOST=${CI_COMMIT_REF_SLUG}. >> .env; fi
+    - echo BRANCH=${CI_COMMIT_REF_SLUG} >> .env
+    - echo IMAGE=${REGISTRY} >> .env
+    - rsync .env ${SERVER_USER}@${SERVER_IP}:${PATH_PROJECT}
+
+    # deploy docker-compose
+    - rsync .docker/${MODE}/docker-compose.yml ${SERVER_USER}@${SERVER_IP}:${PATH_PROJECT}
+
+    # run containers
+    - ssh ${SERVER_USER}@${SERVER_IP} -t "
+      cd ${PATH_PROJECT};
+      docker pull ${REGISTRY};
+      docker-compose up -d --remove-orphans;"

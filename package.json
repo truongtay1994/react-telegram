@@ -1,36 +1,77 @@
 {
-  "name": "my-ap-test",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@types/jest": "24.0.22",
-    "@types/node": "12.12.6",
-    "@types/react": "16.9.11",
-    "@types/react-dom": "16.9.3",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-scripts": "3.2.0",
-    "typescript": "3.7.2"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "develop": "concurrently -r \"npm:type-check:watch\" \"npm:start\"",
+    "start": "parcel src/index.html --open",
+    "build": "parcel  build src/index.html",
+    "prettier-write": "prettier --write \"./src/**/*.js\"",
+    "prettier-check": "prettier --check \"./src/**/*.js\"",
+    "storybook": "start-storybook --port 3100 --ci -s ./src",
+    "precommit": "lint-staged",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "dependencies": {
+    "babel-loader": "^8.0.6",
+    "parcel-plugin-static-files-copy": "^2.2.1",
+    "react": "^15.0.0 || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0",
+    "react-helmet": "^5.2.1",
+    "react-redux": "^7.1.1",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
+    "react-router-link": "^2.0.2",
+    "redux": "^3.1.0 || ^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^4.4.0",
+    "throttle-debounce": "^2.1.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+  "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.6.3",
+    "@types/jest": "^24.0.22",
+    "@types/node": "^12.12.6",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-redux": "^7.1.5",
+    "@types/react-router-dom": "^5.1.2",
+    "babel-core": "^6.26.3",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-plugin-react-docgen": "^3.2.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "concurrently": "^5.0.0",
+    "husky": "^3.0.8",
+    "lint-staged": "^9.4.2",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.18.2",
+    "react-hot-loader": "^4.12.15",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-logger": "^3.0.6",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.1.0",
+    "typescript": "^3.7.2"
+  },
+  "staticFiles": {
+    "staticPath": "src/assets",
+    "staticOutDir": "assets",
+    "watcherGlob": "**"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write",
+      "git add"
     ]
   }
 }
