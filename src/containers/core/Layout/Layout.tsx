@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import global from 'styles/global';
+import { client } from 'controllers';
+
+console.log(client)
 
 import 'styles/fonts.css';
 import '/styles/reset.css';
