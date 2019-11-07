@@ -6,7 +6,7 @@ import { debounce } from 'throttle-debounce';
 import { Layout } from 'containers';
 import actionsCreators from 'store/actions';
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any): any => {
   return {
     actions: {
       changeDimensions: bindActionCreators(actionsCreators.changeDimensions, dispatch)
@@ -14,17 +14,21 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any): any => {
   return {
     app: state.app
   };
 };
 
+type Props = {
+  actions: any;
+}
+
 @connect(
   mapStateToProps,
   mapDispatchToProps
 )
-export default class PageWrapper extends Component {
+export default class PageWrapper extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
   }
@@ -34,7 +38,7 @@ export default class PageWrapper extends Component {
     this.onResize(null, true);
   }
 
-  onResize = (e, force) => {
+  onResize = (e?: any, force?: boolean) => {
     if (force) {
       this.changeDimensions(e);
     } else {
@@ -46,7 +50,7 @@ export default class PageWrapper extends Component {
     this.changeDimensions(e);
   });
 
-  changeDimensions() {
+  changeDimensions(e?: any) {
     const { actions } = this.props;
     const width = document.documentElement.clientWidth;
     const height = document.documentElement.clientHeight;

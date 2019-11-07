@@ -2,12 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 // import { Router, Route, hashHistory } from 'react-router'
-import { BrowserRouter, HashRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import { initStore } from 'store';
-import { Button } from 'components';
 import { PageWrapper } from 'containers';
-import { MainPage, ProductPage } from 'pages';
 
 const store = initStore();
 
@@ -15,13 +13,13 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <HashRouter>
+        <BrowserRouter>
           <PageWrapper>
             <Switch>
               <Route exact path="/" children={<div>test</div>} />
             </Switch>
           </PageWrapper>
-        </HashRouter>
+        </BrowserRouter>
       </Provider>
     );
   }
